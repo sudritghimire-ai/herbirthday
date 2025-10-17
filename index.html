@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SUD-01 Virtual Assistant</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #0a0a0a;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Enhanced animated gradient background with more vibrant colors */
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #1a1a2e, #16213e, #0f3460, #533483);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            z-index: 0;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Added animated wave layers */
+        .wave-container {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            opacity: 0.15;
+        }
+
+        .wave {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 200%;
+            height: 100%;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z' opacity='.25' fill='%23ffffff'/%3E%3Cpath d='M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z' opacity='.5' fill='%23ffffff'/%3E%3Cpath d='M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z' fill='%23ffffff'/%3E%3C/svg%3E");
+            background-repeat: repeat-x;
+            animation: waveMove 25s linear infinite;
+        }
+
+        .wave-2 {
+            animation-duration: 35s;
+            animation-direction: reverse;
+            opacity: 0.5;
+        }
+
+        .wave-3 {
+            animation-duration: 45s;
+            opacity: 0.3;
+        }
+
+        @keyframes waveMove {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* Added floating geometric shapes */
+        .shapes-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .shape {
+            position: absolute;
+            opacity: 0.1;
+            animation: floatShape 20s ease-in-out infinite;
+        }
+
+        .shape-circle {
+            width: 100px;
+            height: 100px;
+            border: 3px solid white;
+            border-radius: 50%;
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .shape-square {
+            width: 80px;
+            height: 80px;
+            border: 3px solid white;
+            top: 60%;
+            right: 15%;
+            animation-delay: 5s;
+            animation-duration: 25s;
+        }
+
+        .shape-triangle {
+            width: 0;
+            height: 0;
+            border-left: 50px solid transparent;
+            border-right: 50px solid transparent;
+            border-bottom: 86px solid white;
+            top: 40%;
+            left: 80%;
+            animation-delay: 10s;
+            animation-duration: 30s;
+        }
+
+        @keyframes floatShape {
+            0%, 100% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+            25% {
+                transform: translate(50px, -50px) rotate(90deg);
+            }
+            50% {
+                transform: translate(0, -100px) rotate(180deg);
+            }
+            75% {
+                transform: translate(-50px, -50px) rotate(270deg);
+            }
+        }
+
+        /* Enhanced particle system */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 3;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            animation: float linear infinite;
+            box-shadow: 
+                0 0 10px rgba(138, 43, 226, 0.8),
+                0 0 20px rgba(138, 43, 226, 0.5);
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) translateX(0) scale(0) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) translateX(100px) scale(1.5) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Enhanced glowing orbs with more vibrant colors and better visibility */
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.4;
+            animation: orbFloat 20s ease-in-out infinite;
+            z-index: 1;
+        }
+
+        .orb-1 {
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, #ff006e, #8338ec);
+            top: -300px;
+            left: -300px;
+            animation-delay: 0s;
+        }
+
+        .orb-2 {
+            width: 700px;
+            height: 700px;
+            background: radial-gradient(circle, #3a86ff, #06ffa5);
+            bottom: -350px;
+            right: -350px;
+            animation-delay: 7s;
+        }
+
+        .orb-3 {
+            width: 550px;
+            height: 550px;
+            background: radial-gradient(circle, #fb5607, #ffbe0b);
+            top: 50%;
+            left: 50%;
+            animation-delay: 14s;
+        }
+
+        @keyframes orbFloat {
+            0%, 100% {
+                transform: translate(0, 0) scale(1);
+            }
+            33% {
+                transform: translate(150px, -150px) scale(1.2);
+            }
+            66% {
+                transform: translate(-150px, 150px) scale(0.8);
+            }
+        }
+
+        /* Enhanced grid overlay with better visibility */
+        .grid-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.03) 2px, transparent 2px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 2px, transparent 2px);
+            background-size: 60px 60px;
+            z-index: 2;
+            animation: gridPulse 4s ease-in-out infinite;
+        }
+
+        @keyframes gridPulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 0.8; }
+        }
+
+        /* Main container */
+        .container {
+            position: relative;
+            z-index: 10;
+            animation: containerFadeIn 1s ease-out;
+        }
+
+        @keyframes containerFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .box {
+            width: 90vw;
+            max-width: 500px;
+            padding: 50px 40px;
+            background: rgba(10, 10, 30, 0.7);
+            backdrop-filter: blur(30px);
+            border-radius: 30px;
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 
+                0 8px 32px 0 rgba(0, 0, 0, 0.6),
+                inset 0 1px 0 0 rgba(255, 255, 255, 0.2),
+                0 0 80px rgba(138, 43, 226, 0.3);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Enhanced shimmer effect */
+        .box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent,
+                rgba(255, 255, 255, 0.15),
+                transparent
+            );
+            transform: rotate(45deg);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                transform: translateX(-100%) translateY(-100%) rotate(45deg);
+            }
+            100% {
+                transform: translateX(100%) translateY(100%) rotate(45deg);
+            }
+        }
+
+        /* Enhanced name styling with better glow */
+        .name {
+            font-size: 32px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 30px;
+            text-shadow: 
+                0 0 10px rgba(138, 43, 226, 0.8),
+                0 0 20px rgba(138, 43, 226, 0.6),
+                0 0 30px rgba(138, 43, 226, 0.4);
+            letter-spacing: 1px;
+            position: relative;
+            z-index: 2;
+            animation: nameGlow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes nameGlow {
+            from {
+                text-shadow: 
+                    0 0 10px rgba(138, 43, 226, 0.8),
+                    0 0 20px rgba(138, 43, 226, 0.6),
+                    0 0 30px rgba(138, 43, 226, 0.4);
+            }
+            to {
+                text-shadow: 
+                    0 0 20px rgba(138, 43, 226, 1),
+                    0 0 30px rgba(138, 43, 226, 0.8),
+                    0 0 40px rgba(138, 43, 226, 0.6),
+                    0 0 50px rgba(138, 43, 226, 0.4);
+            }
+        }
+
+        /* Enhanced demo text styling for better visibility */
+        #demo {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 18px;
+            line-height: 1.8;
+            color: #ffffff;
+            min-height: 200px;
+            text-align: left;
+            white-space: pre-wrap;
+            position: relative;
+            z-index: 2;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            border: 1px solid rgba(138, 43, 226, 0.3);
+            box-shadow: 
+                inset 0 0 20px rgba(138, 43, 226, 0.1),
+                0 0 20px rgba(138, 43, 226, 0.2);
+        }
+
+        /* Enhanced blinking cursor */
+        #demo::after {
+            content: '|';
+            animation: blink 0.8s step-end infinite;
+            margin-left: 2px;
+            color: #8a2be2;
+            font-weight: bold;
+        }
+
+        @keyframes blink {
+            0%, 50% {
+                opacity: 1;
+            }
+            51%, 100% {
+                opacity: 0;
+            }
+        }
+
+        #input-container {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            margin-top: 30px;
+            position: relative;
+            z-index: 2;
+        }
+
+        #input-container.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .input-wrapper {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        #name-input {
+            width: 100%;
+            padding: 16px 20px;
+            font-size: 16px;
+            font-family: 'Inter', sans-serif;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            color: #ffffff;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        #name-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        #name-input:focus {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.6);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Enhanced button styling */
+        #submit-button {
+            width: 100%;
+            padding: 16px 20px;
+            font-size: 16px;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #8a2be2 0%, #4b0082 100%);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 
+                0 4px 15px rgba(138, 43, 226, 0.4),
+                0 0 30px rgba(138, 43, 226, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        #submit-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        #submit-button:hover::before {
+            left: 100%;
+        }
+
+        #submit-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 
+                0 6px 25px rgba(138, 43, 226, 0.6),
+                0 0 40px rgba(138, 43, 226, 0.4);
+        }
+
+        #submit-button:active {
+            transform: translateY(-1px);
+            box-shadow: 0 3px 15px rgba(138, 43, 226, 0.2);
+        }
+
+        /* Custom alert styling */
+        .custom-alert {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.7);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 40px;
+            border-radius: 25px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .custom-alert.show {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+            pointer-events: all;
+        }
+
+        .custom-alert-text {
+            color: #333;
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        .custom-alert-button {
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .custom-alert-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .alert-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            z-index: 999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .alert-overlay.show {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        /* Responsive design */
+        @media (max-width: 600px) {
+            .box {
+                padding: 40px 30px;
+            }
+
+            .name {
+                font-size: 26px;
+            }
+
+            #demo {
+                font-size: 16px;
+                padding: 15px;
+            }
+
+            .custom-alert {
+                max-width: 90vw;
+                padding: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="animated-bg"></div>
+    <div class="wave-container">
+        <div class="wave"></div>
+        <div class="wave wave-2"></div>
+        <div class="wave wave-3"></div>
+    </div>
+    <div class="grid-overlay"></div>
+    <div class="shapes-container">
+        <div class="shape shape-circle"></div>
+        <div class="shape shape-square"></div>
+        <div class="shape shape-triangle"></div>
+    </div>
+    <div class="particles" id="particles"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    <div class="alert-overlay" id="alertOverlay"></div>
+    <div class="custom-alert" id="customAlert">
+        <div class="custom-alert-text" id="alertText"></div>
+        <button class="custom-alert-button" onclick="closeAlert()">OK</button>
+    </div>
+
+    <div class="container">
+        <div class="box">
+            <h1 class="name">Sudrit Ghimire</h1>
+            <p id="demo"></p>
+            <div id="input-container">
+                <div class="input-wrapper">
+                    <input type="text" id="name-input" placeholder="Enter your name" autocomplete="off">
+                </div>
+                <button id="submit-button" onclick="validate()">Submit</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Create floating particles
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 60;
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDuration = (Math.random() * 15 + 10) + 's';
+                particle.style.animationDelay = Math.random() * 5 + 's';
+                particle.style.width = particle.style.height = (Math.random() * 5 + 2) + 'px';
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        createParticles();
+
+        // Typewriter effect
+        var i = 0;
+        var txt = 'Hi,\nMy name is SUD-01, I am your virtual assistant.\n\nPlease type your name below to get started.';
+        var speed = 50;
+        var demoElement = document.getElementById("demo");
+
+        function typeWriter() {
+            if (i < txt.length) {
+                demoElement.innerHTML += txt.charAt(i);
+                i++;
+                setTimeout(typeWriter, speed);
+            } else {
+                demoElement.classList.add('typing-complete');
+                setTimeout(function() {
+                    document.getElementById("input-container").classList.add('show');
+                }, 900);
+            }
+        }
+
+        typeWriter();
+
+        // Custom alert function
+        function showAlert(message) {
+            document.getElementById('alertText').textContent = message;
+            document.getElementById('alertOverlay').classList.add('show');
+            document.getElementById('customAlert').classList.add('show');
+        }
+
+        function closeAlert() {
+            document.getElementById('alertOverlay').classList.remove('show');
+            document.getElementById('customAlert').classList.remove('show');
+        }
+
+        // Validation function
+        function validate() {
+            var name = document.getElementById("name-input").value.toLowerCase();
+            var trueName = "supriya";
+            var guessName = "deepika";
+
+            if (name === trueName) {
+                window.location.href = 'index1.html';
+            } else if (name === guessName) {
+                showAlert("A lovely name 💕 but I'll always remember the first special name you had in my heart 🌸");
+                document.getElementById("name-input").value = "";
+            } else {
+                showAlert("I am sorry, this website is only for my bebss 😌😌😌");
+                document.getElementById("name-input").value = "";
+            }
+        }
+
+        // Allow Enter key to submit
+        document.getElementById('name-input').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                validate();
+            }
+        });
+
+        // Close alert on overlay click
+        document.getElementById('alertOverlay').addEventListener('click', closeAlert);
+    </script>
+</body>
+</html>
